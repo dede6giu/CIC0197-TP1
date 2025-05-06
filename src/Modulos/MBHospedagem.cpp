@@ -22,9 +22,9 @@ bool MBHospedagem::criar(Hospedagem novoHospedagem)
     // verifica se uma Hospedagem com mesma tag ja existe
     if (MBHospedagem::ler(novoHospedagem)) return false;
 
-    string comando = "INSERT INTO ";
+    string comando = "INSERT INTO [";
     comando += novoHospedagem.getValorCodigo();
-    comando += " (Tag, TagDestino, Nome, Avaliacao, Diaria) VALUES ('";
+    comando += "] (Tag, TagDestino, Nome, Avaliacao, Diaria) VALUES ('";
     comando += novoHospedagem.getTag().getValor();            comando += "', '";
     comando += novoHospedagem.getTagDestino().getValor();     comando += "', '";
     comando += novoHospedagem.getValorNome();                 comando += "', '";
@@ -44,9 +44,9 @@ bool MBHospedagem::criar(Hospedagem novoHospedagem)
 
 void MBHospedagem::criar(Codigo tabelaNova)
 {
-    string comando = "CREATE TABLE IF NOT EXISTS ";
+    string comando = "CREATE TABLE IF NOT EXISTS [";
     comando += tabelaNova.getValor();
-    comando += " (Tag, TagDestino, Nome, Avaliacao, Diaria);";
+    comando += "] (Tag, TagDestino, Nome, Avaliacao, Diaria);";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -62,9 +62,9 @@ bool MBHospedagem::excluir(Hospedagem hospedagemExcluir)
     // checa se a hospedagem existe
     if (!MBHospedagem::ler(hospedagemExcluir)) return false;
 
-    string comando = "DELETE FROM ";
+    string comando = "DELETE FROM [";
     comando += hospedagemExcluir.getValorCodigo();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += hospedagemExcluir.getTag().getValor();
     comando += "';";
 
@@ -80,9 +80,9 @@ bool MBHospedagem::excluir(Hospedagem hospedagemExcluir)
 
 void MBHospedagem::excluir(Codigo tabelaExcluir)
 {
-    string comando = "DROP TABLE IF EXISTS ";
+    string comando = "DROP TABLE IF EXISTS [";
     comando += tabelaExcluir.getValor();
-    comando += " ;";
+    comando += "];";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -97,9 +97,9 @@ void MBHospedagem::excluir(Codigo contaExcluir, Codigo destinoExcluir)
 {
     MBHospedagem::criar(contaExcluir);
 
-    string comando = "DELETE FROM ";
+    string comando = "DELETE FROM [";
     comando += contaExcluir.getValor();
-    comando += " WHERE TagDestino='";
+    comando += "] WHERE TagDestino='";
     comando += destinoExcluir.getValor();
     comando += "';";
 
@@ -122,9 +122,9 @@ bool MBHospedagem::ler(Hospedagem hospedagemCheque)
     // garante que a conta tem uma tabela
     MBHospedagem::criar(contaAssociada);
 
-    string comando = "SELECT Tag FROM ";
+    string comando = "SELECT Tag FROM [";
     comando += contaAssociada.getValor();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += tag.getValor();
     comando += "';";
 
@@ -158,9 +158,9 @@ std::vector<Hospedagem> MBHospedagem::ler(Codigo contaCheque, Codigo destinoCheq
     // garante que a conta tem uma tabela
     MBHospedagem::criar(contaCheque);
 
-    string comando = "SELECT Tag, TagDestino, Nome, Avaliacao, Diaria FROM ";
+    string comando = "SELECT Tag, TagDestino, Nome, Avaliacao, Diaria FROM [";
     comando += contaCheque.getValor();
-    comando += " WHERE TagDestino='";
+    comando += "] WHERE TagDestino='";
     comando += destinoCheque.getValor();
     comando += "';";
     sqlite3_stmt *stmt;
@@ -205,9 +205,9 @@ bool MBHospedagem::atualizar(Hospedagem hospedagemAtual, Nome novoNome)
     // checa se a hospedagem existe
     if (!MBHospedagem::ler(hospedagemAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += hospedagemAtual.getValorCodigo();
-    comando += " SET Nome='";
+    comando += "] SET Nome='";
     comando += novoNome.getValor();
     comando += "' WHERE Tag='";
     comando += hospedagemAtual.getTag().getValor();
@@ -229,9 +229,9 @@ bool MBHospedagem::atualizar(Hospedagem hospedagemAtual, Dinheiro novoDiaria)
     // checa se a hospedagem existe
     if (!MBHospedagem::ler(hospedagemAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += hospedagemAtual.getValorCodigo();
-    comando += " SET Diaria='";
+    comando += "] SET Diaria='";
     comando += to_string(novoDiaria.getValor());
     comando += "' WHERE Tag='";
     comando += hospedagemAtual.getTag().getValor();
@@ -253,9 +253,9 @@ bool MBHospedagem::atualizar(Hospedagem hospedagemAtual, Avaliacao novoAvaliacao
     // checa se a hospedagem existe
     if (!MBHospedagem::ler(hospedagemAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += hospedagemAtual.getValorCodigo();
-    comando += " SET Avaliacao='";
+    comando += "] SET Avaliacao='";
     comando += to_string(novoAvaliacao.getValor());
     comando += "' WHERE Tag='";
     comando += hospedagemAtual.getTag().getValor();
