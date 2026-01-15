@@ -30,9 +30,9 @@ bool MBViagem::criar(Viagem novaViagem)
     // garante que a conta tem uma tabela
     MBViagem::criar(Codigo(novaViagem.getValorCodigo()));
 
-    string comando = "INSERT INTO ";
+    string comando = "INSERT INTO [";
     comando += novaViagem.getValorCodigo();
-    comando += " (Tag, Nome, Avaliacao) VALUES ('";
+    comando += "] (Tag, Nome, Avaliacao) VALUES ('";
     comando += novaViagem.getTag().getValor();            comando += "', '";
     comando += novaViagem.getValorNome();                 comando += "', '";
     comando += to_string(novaViagem.getValorAvaliacao()); comando += "');";
@@ -51,9 +51,9 @@ bool MBViagem::criar(Viagem novaViagem)
 
 void MBViagem::criar(Codigo tabelaNova)
 {
-    string comando = "CREATE TABLE IF NOT EXISTS ";
+    string comando = "CREATE TABLE IF NOT EXISTS [";
     comando += tabelaNova.getValor();
-    comando += " (Tag, Nome, Avaliacao);";
+    comando += "] (Tag, Nome, Avaliacao);";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -72,9 +72,9 @@ bool MBViagem::excluir(Viagem viagemExcluir)
     // exclui destinos associados
     cntrIBDestino->excluir(Codigo(viagemExcluir.getValorCodigo()), viagemExcluir.getTag());
 
-    string comando = "DELETE FROM ";
+    string comando = "DELETE FROM [";
     comando += viagemExcluir.getValorCodigo();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += viagemExcluir.getTag().getValor();
     comando += "';";
     // cout << endl << comando;
@@ -94,9 +94,9 @@ void MBViagem::excluir(Codigo tabelaExcluir)
     // exclui destinos da conta
     cntrIBDestino->excluir(tabelaExcluir);
 
-    string comando = "DROP TABLE IF EXISTS ";
+    string comando = "DROP TABLE IF EXISTS [";
     comando += tabelaExcluir.getValor();
-    comando += ";";
+    comando += "];";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -115,9 +115,9 @@ bool MBViagem::ler(Viagem viagemCheque)
     // garante que a conta tem uma tabela
     MBViagem::criar(contaAssociada);
 
-    string comando = "SELECT Tag FROM ";
+    string comando = "SELECT Tag FROM [";
     comando += contaAssociada.getValor();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += tag.getValor();
     comando += "';";
 
@@ -151,15 +151,16 @@ std::vector<Viagem> MBViagem::ler(Codigo contaCheque)
     // garante que a conta tem uma tabela
     MBViagem::criar(contaCheque);
 
-    string comando = "SELECT Tag, Nome, Avaliacao FROM ";
+    string comando = "SELECT Tag, Nome, Avaliacao FROM [";
     comando += contaCheque.getValor();
-    comando += ";";
+    comando += "];";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(banco, comando.c_str(), -1, &stmt, NULL);
     if (rc != SQLITE_OK)
     {
         string err = sqlite3_errmsg(banco);
-        throw runtime_error(err);
+        cerr << err << endl;
+        throw runtime_error(err); // aq
     }
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW)
     {
@@ -194,9 +195,9 @@ bool MBViagem::atualizar(Viagem viagemAtual, Avaliacao novoAvaliacao)
     // checa se a viagem existe
     if (!MBViagem::ler(viagemAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += viagemAtual.getValorCodigo();
-    comando += " SET Avaliacao='";
+    comando += "] SET Avaliacao='";
     comando += to_string(novoAvaliacao.getValor());
     comando += "' WHERE Tag='";
     comando += viagemAtual.getTag().getValor();
@@ -218,9 +219,9 @@ bool MBViagem::atualizar(Viagem viagemAtual, Nome novoNome)
     // checa se a viagem existe
     if (!MBViagem::ler(viagemAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += viagemAtual.getValorCodigo();
-    comando += " SET Nome='";
+    comando += "] SET Nome='";
     comando += novoNome.getValor();
     comando += "' WHERE Tag='";
     comando += viagemAtual.getTag().getValor();

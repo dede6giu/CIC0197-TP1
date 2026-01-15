@@ -22,9 +22,9 @@ bool MBAtividade::criar(Atividade novoAtividade)
     // verifica se uma Atividade com mesma tag ja existe
     if (MBAtividade::ler(novoAtividade)) return false;
 
-    string comando = "INSERT INTO ";
+    string comando = "INSERT INTO [";
     comando += novoAtividade.getValorCodigo();
-    comando += " (Tag, TagDestino, Nome, Data, Horario, Duracao, Preco, Avaliacao) VALUES ('";
+    comando += "] (Tag, TagDestino, Nome, Data, Horario, Duracao, Preco, Avaliacao) VALUES ('";
     comando += novoAtividade.getTag().getValor();            comando += "', '";
     comando += novoAtividade.getTagDestino().getValor();     comando += "', '";
     comando += novoAtividade.getValorNome();                 comando += "', '";
@@ -47,9 +47,9 @@ bool MBAtividade::criar(Atividade novoAtividade)
 
 void MBAtividade::criar(Codigo tabelaNova)
 {
-    string comando = "CREATE TABLE IF NOT EXISTS ";
+    string comando = "CREATE TABLE IF NOT EXISTS [";
     comando += tabelaNova.getValor();
-    comando += " (Tag, TagDestino, Nome, Data, Horario, Duracao, Preco, Avaliacao);";
+    comando += "] (Tag, TagDestino, Nome, Data, Horario, Duracao, Preco, Avaliacao);";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -65,9 +65,9 @@ bool MBAtividade::excluir(Atividade atividadeExcluir)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeExcluir)) return false;
 
-    string comando = "DELETE FROM ";
+    string comando = "DELETE FROM [";
     comando += atividadeExcluir.getValorCodigo();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += atividadeExcluir.getTag().getValor();
     comando += "';";
 
@@ -83,9 +83,9 @@ bool MBAtividade::excluir(Atividade atividadeExcluir)
 
 void MBAtividade::excluir(Codigo tabelaExcluir)
 {
-    string comando = "DROP TABLE IF EXISTS ";
+    string comando = "DROP TABLE IF EXISTS [";
     comando += tabelaExcluir.getValor();
-    comando += " ;";
+    comando += "];";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -100,9 +100,9 @@ void MBAtividade::excluir(Codigo contaExcluir, Codigo destinoExcluir)
 {
     MBAtividade::criar(contaExcluir);
 
-    string comando = "DELETE FROM ";
+    string comando = "DELETE FROM [";
     comando += contaExcluir.getValor();
-    comando += " WHERE TagDestino='";
+    comando += "] WHERE TagDestino='";
     comando += destinoExcluir.getValor();
     comando += "';";
 
@@ -125,9 +125,9 @@ bool MBAtividade::ler(Atividade atividadeCheque)
     // garante que a conta tem uma tabela
     MBAtividade::criar(contaAssociada);
 
-    string comando = "SELECT Tag FROM ";
+    string comando = "SELECT Tag FROM [";
     comando += contaAssociada.getValor();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += tag.getValor();
     comando += "';";
 
@@ -161,9 +161,9 @@ std::vector<Atividade> MBAtividade::ler(Codigo contaCheque, Codigo destinoCheque
     // garante que a conta tem uma tabela
     MBAtividade::criar(contaCheque);
 
-    string comando = "SELECT Tag, TagDestino, Nome, Data, Horario, Duracao, Preco, Avaliacao FROM ";
+    string comando = "SELECT Tag, TagDestino, Nome, Data, Horario, Duracao, Preco, Avaliacao FROM [";
     comando += contaCheque.getValor();
-    comando += " WHERE TagDestino='";
+    comando += "] WHERE TagDestino='";
     comando += destinoCheque.getValor();
     comando += "';";
     sqlite3_stmt *stmt;
@@ -216,9 +216,9 @@ bool MBAtividade::atualizar(Atividade atividadeAtual, Nome novoNome)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += atividadeAtual.getValorCodigo();
-    comando += " SET Nome='";
+    comando += "] SET Nome='";
     comando += novoNome.getValor();
     comando += "' WHERE Tag='";
     comando += atividadeAtual.getTag().getValor();
@@ -240,9 +240,9 @@ bool MBAtividade::atualizar(Atividade atividadeAtual, Data novoData)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += atividadeAtual.getValorCodigo();
-    comando += " SET Data='";
+    comando += "] SET Data='";
     comando += novoData.getValor();
     comando += "' WHERE Tag='";
     comando += atividadeAtual.getTag().getValor();
@@ -264,9 +264,9 @@ bool MBAtividade::atualizar(Atividade atividadeAtual, Horario novoHorario)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += atividadeAtual.getValorCodigo();
-    comando += " SET Horario='";
+    comando += "] SET Horario='";
     comando += novoHorario.getValor();
     comando += "' WHERE Tag='";
     comando += atividadeAtual.getTag().getValor();
@@ -288,9 +288,9 @@ bool MBAtividade::atualizar(Atividade atividadeAtual, Duracao novoDuracao)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += atividadeAtual.getValorCodigo();
-    comando += " SET Duracao='";
+    comando += "] SET Duracao='";
     comando += to_string(novoDuracao.getValor());
     comando += "' WHERE Tag='";
     comando += atividadeAtual.getTag().getValor();
@@ -312,9 +312,9 @@ bool MBAtividade::atualizar(Atividade atividadeAtual, Dinheiro novoDinheiro)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += atividadeAtual.getValorCodigo();
-    comando += " SET Preco='";
+    comando += "] SET Preco='";
     comando += to_string(novoDinheiro.getValor());
     comando += "' WHERE Tag='";
     comando += atividadeAtual.getTag().getValor();
@@ -336,9 +336,9 @@ bool MBAtividade::atualizar(Atividade atividadeAtual, Avaliacao novoAvaliacao)
     // checa se a atividade existe
     if (!MBAtividade::ler(atividadeAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += atividadeAtual.getValorCodigo();
-    comando += " SET Avaliacao='";
+    comando += "] SET Avaliacao='";
     comando += to_string(novoAvaliacao.getValor());
     comando += "' WHERE Tag='";
     comando += atividadeAtual.getTag().getValor();

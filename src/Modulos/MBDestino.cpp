@@ -28,9 +28,9 @@ bool MBDestino::criar(Destino novoDestino)
     // verifica se um destino com mesma tag ja existe
     if (MBDestino::ler(novoDestino)) return false;
 
-    string comando = "INSERT INTO ";
+    string comando = "INSERT INTO [";
     comando += novoDestino.getValorCodigo();
-    comando += " (Tag, TagViagem, Nome, Inicio, Fim, Avaliacao) VALUES ('";
+    comando += "] (Tag, TagViagem, Nome, Inicio, Fim, Avaliacao) VALUES ('";
     comando += novoDestino.getTag().getValor();            comando += "', '";
     comando += novoDestino.getTagViagem().getValor();      comando += "', '";
     comando += novoDestino.getValorNome();                 comando += "', '";
@@ -51,9 +51,9 @@ bool MBDestino::criar(Destino novoDestino)
 
 void MBDestino::criar(Codigo tabelaNova)
 {
-    string comando = "CREATE TABLE IF NOT EXISTS ";
+    string comando = "CREATE TABLE IF NOT EXISTS [";
     comando += tabelaNova.getValor();
-    comando += " (Tag, TagViagem, Nome, Inicio, Fim, Avaliacao);";
+    comando += "] (Tag, TagViagem, Nome, Inicio, Fim, Avaliacao);";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -74,9 +74,9 @@ bool MBDestino::excluir(Destino destinoExcluir)
     // exclui hospedagem associadas
     cntrIBHospedagem->excluir(Codigo(destinoExcluir.getValorCodigo()), destinoExcluir.getTag());
 
-    string comando = "DELETE FROM ";
+    string comando = "DELETE FROM [";
     comando += destinoExcluir.getValorCodigo();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += destinoExcluir.getTag().getValor();
     comando += "';";
 
@@ -97,9 +97,9 @@ void MBDestino::excluir(Codigo tabelaExcluir)
     // exclui hospedagens da conta
     cntrIBHospedagem->excluir(tabelaExcluir);
 
-    string comando = "DROP TABLE IF EXISTS ";
+    string comando = "DROP TABLE IF EXISTS [";
     comando += tabelaExcluir.getValor();
-    comando += " ;";
+    comando += "];";
     char* errmsg;
     int rc = sqlite3_exec(banco, comando.c_str(), nullptr, 0, &errmsg);
     if (rc != SQLITE_OK)
@@ -116,9 +116,9 @@ void MBDestino::excluir(Codigo contaExcluir, Codigo viagemExcluir)
 
     MBDestino::criar(contaExcluir);
 
-    string comando = "SELECT Tag FROM ";
+    string comando = "SELECT Tag FROM [";
     comando += contaExcluir.getValor();
-    comando += " WHERE TagViagem='";
+    comando += "] WHERE TagViagem='";
     comando += viagemExcluir.getValor();
     comando += "';";
 
@@ -153,9 +153,9 @@ void MBDestino::excluir(Codigo contaExcluir, Codigo viagemExcluir)
         cntrIBHospedagem->excluir(contaExcluir, Codigo(*itr));
     }
 
-    comando = "DELETE FROM ";
+    comando = "DELETE FROM [";
     comando += contaExcluir.getValor();
-    comando += " WHERE TagViagem='";
+    comando += "] WHERE TagViagem='";
     comando += viagemExcluir.getValor();
     comando += "';";
 
@@ -178,9 +178,9 @@ bool MBDestino::ler(Destino destinoCheque)
     // garante que a conta tem uma tabela
     MBDestino::criar(contaAssociada);
 
-    string comando = "SELECT Tag FROM ";
+    string comando = "SELECT Tag FROM [";
     comando += contaAssociada.getValor();
-    comando += " WHERE Tag='";
+    comando += "] WHERE Tag='";
     comando += tag.getValor();
     comando += "';";
 
@@ -214,9 +214,9 @@ std::vector<Destino> MBDestino::ler(Codigo contaCheque, Codigo viagemCheque)
     // garante que a conta tem uma tabela
     MBDestino::criar(contaCheque);
 
-    string comando = "SELECT Tag, Nome, Inicio, Fim, Avaliacao FROM ";
+    string comando = "SELECT Tag, Nome, Inicio, Fim, Avaliacao FROM [";
     comando += contaCheque.getValor();
-    comando += " WHERE TagViagem='";
+    comando += "] WHERE TagViagem='";
     comando += viagemCheque.getValor();
     comando += "';";
     sqlite3_stmt *stmt;
@@ -266,9 +266,9 @@ bool MBDestino::atualizar(Destino destinoAtual, Nome novoNome)
     // checa se o destino existe
     if (!MBDestino::ler(destinoAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += destinoAtual.getValorCodigo();
-    comando += " SET Nome='";
+    comando += "] SET Nome='";
     comando += novoNome.getValor();
     comando += "' WHERE Tag='";
     comando += destinoAtual.getTag().getValor();
@@ -290,8 +290,9 @@ bool MBDestino::atualizar(Destino destinoAtual, Data novaData, bool fim)
     // checa se o destino existe
     if (!MBDestino::ler(destinoAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += destinoAtual.getValorCodigo();
+    comando += "]";
     if (fim)
     {
         comando += " SET Inicio='";
@@ -321,9 +322,9 @@ bool MBDestino::atualizar(Destino destinoAtual, Avaliacao novaAvaliacao)
     // checa se o destino existe
     if (!MBDestino::ler(destinoAtual)) return false;
 
-    string comando = "UPDATE ";
+    string comando = "UPDATE [";
     comando += destinoAtual.getValorCodigo();
-    comando += " SET Avaliacao='";
+    comando += "] SET Avaliacao='";
     comando += to_string(novaAvaliacao.getValor());
     comando += "' WHERE Tag='";
     comando += destinoAtual.getTag().getValor();
